@@ -1,6 +1,6 @@
 ("use strict");
 import { v4 as uuidv4 } from "uuid";
-const stripe = require("stripe")(process.env.STRIPE_KEY_LIVE);
+const stripe = require("stripe")(process.env.STRIPE_SK_KEY_LIVE);
 /**
  * order controller
  */
