@@ -5,10 +5,10 @@ export default [
   'strapi::poweredBy',
   'strapi::logger',
   'strapi::query',
-  'strapi::body',
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
+  { name: 'strapi::body', config: { includeUnparsed: true } },
   {
     name: 'strapi::security',
     config: {

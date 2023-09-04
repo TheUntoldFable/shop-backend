@@ -1,6 +1,6 @@
 ("use strict");
 import { v4 as uuidv4 } from "uuid";
-const stripe = require("stripe")(process.env.STRIPE_KEY_TEST);
+const stripe = require("stripe")(process.env.STRIPE_KEY_LIVE);
 /**
  * order controller
  */
@@ -10,7 +10,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   async create(ctx) {
     const { products, paymentMethod, status, addressInfo, user, totalPrice } =
       ctx.request.body;
-
+    const { host } = ctx.request;
     try {
       if (paymentMethod === "card") {
         const orderId = await uuidv4();
@@ -20,9 +20,6 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
             const item = await strapi
               .service("api::product.product")
               .findOne(product.id);
-
-            console.log("this is item------->", item);
-            console.log("this is product------->", product);
 
             return {
               price_data: {
@@ -40,23 +37,30 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ["card"],
           mode: "payment",
-          success_url: process.env.CLIENT_URL + `/success`,
-          cancel_url: process.env.CLIENT_URL + "/failed",
+          success_url: host.includes("localhost")
+            ? "http://localhost:3000/success"
+            : `${host}/success`,
+          cancel_url: host.includes("localhost")
+            ? "http://localhost:3000/failed"
+            : `${host}/failed`,
           line_items: lineItems,
         });
 
-        await strapi.service("api::order.order").create({
-          data: {
-            products,
-            stripeId: session.id,
-            paymentMethod,
-            orderId,
-            status,
-            addressInfo,
-            user,
-            totalPrice,
-          },
-        });
+
+        if (session) {
+          await strapi.service("api::order.order").create({
+            data: {
+              products,
+              stripeId: session.id,
+              paymentMethod,
+              orderId,
+              status,
+              addressInfo,
+              user,
+              totalPrice,
+            },
+          });
+        }
 
         return { stripeSession: session };
       } else {

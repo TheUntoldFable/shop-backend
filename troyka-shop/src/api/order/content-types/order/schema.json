@@ -44,6 +44,11 @@
     },
     "totalPrice": {
       "type": "decimal"
+    },
+    "isPaid": {
+      "type": "boolean",
+      "default": false,
+      "required": false
     }
   }
 }
