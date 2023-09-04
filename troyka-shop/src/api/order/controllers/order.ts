@@ -39,10 +39,10 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           mode: "payment",
           success_url: host.includes("localhost")
             ? "http://localhost:3000/success"
-            : `${process.env.BACKEND_URL}/success`,
+            : `https://${host}/success`,
           cancel_url: host.includes("localhost")
             ? "http://localhost:3000/failed"
-            : `${process.env.BACKEND_URL}/failed`,
+            : `https://${host}/failed`,
           line_items: lineItems,
         });
 
