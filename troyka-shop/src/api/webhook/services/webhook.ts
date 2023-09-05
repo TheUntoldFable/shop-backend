@@ -2,4 +2,4 @@
  * webhook service
  */
 
-export default () => ({});
+export default () => ({})

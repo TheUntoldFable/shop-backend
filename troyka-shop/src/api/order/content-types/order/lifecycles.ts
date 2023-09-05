@@ -1,12 +1,12 @@
 export default {
-  async afterCreate(event) {
-    const { result } = event;
-    try {
-      await strapi.plugins["email"].services.email.send({
-        to: "pilyovmartin20@gmail.com",
-        from: "threeoyka@gmail.com", //e.g. single sender verification in SendGrid
-        subject: "Нова поръчка",
-        html: `<div><h2>Поръка №: ${result.orderId}</h2></br>
+	async afterCreate(event) {
+		const { result } = event
+		try {
+			await strapi.plugins['email'].services.email.send({
+				to: 'pilyovmartin20@gmail.com',
+				from: 'threeoyka@gmail.com', //e.g. single sender verification in SendGrid
+				subject: 'Нова поръчка',
+				html: `<div><h2>Поръка №: ${result.orderId}</h2></br>
         <div>Адрес:</div></br>
         <div>Град: ${result.addressInfo.city}</div></br>
         <div>Улица: ${result.addressInfo.street}</div></br>
@@ -18,10 +18,10 @@ export default {
         <div>Акаунт: ${result.user}</div></br>
         <div>Имейл: ${result.addressInfo.email}</div></br>
         <h3>Стойност на поръчка: ${result.totalPrice}лв</h3></div>`,
-      });
-    } catch (error) {
-      console.log(error, "e-mail error.");
-      throw new Error("Can not send email, there has been an issue");
-    }
-  },
-};
+			})
+		} catch (error) {
+			console.log(error, 'e-mail error.')
+			throw new Error('Can not send email, there has been an issue')
+		}
+	},
+}
