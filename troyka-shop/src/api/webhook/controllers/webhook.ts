@@ -5,7 +5,12 @@ const stripeConfig: Stripe.StripeConfig = {
 	apiVersion: '2022-11-15',
 }
 
-const stripe = new Stripe(process.env.STRIPE_SK_KEY_LIVE, stripeConfig)
+const stripe = new Stripe(
+	process.env.NODE_ENV === 'development'
+		? process.env.STRIPE_SK_KEY_TEST
+		: process.env.STRIPE_SK_KEY_LIVE,
+	stripeConfig
+)
 
 export default {
 	async handler(ctx, _next) {
@@ -87,6 +92,5 @@ export default {
 		default:
 			console.log(`Unhandled event type ${event.type}`)
 		}
-
 	},
 }

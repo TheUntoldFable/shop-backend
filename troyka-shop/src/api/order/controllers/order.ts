@@ -1,6 +1,10 @@
 ('use strict')
 import { v4 as uuidv4 } from 'uuid'
-const stripe = require('stripe')(process.env.STRIPE_SK_KEY_LIVE)
+const stripe = require('stripe')(
+	process.env.NODE_ENV === 'development'
+		? process.env.STRIPE_SK_KEY_TEST
+		: process.env.STRIPE_SK_KEY_LIVE
+)
 /**
  * order controller
  */
@@ -45,7 +49,6 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 						: `https://${host}/failed`,
 					line_items: lineItems,
 				})
-
 
 				if (session) {
 					await strapi.service('api::order.order').create({
