@@ -11,11 +11,11 @@ const stripe = new Stripe(
 		: process.env.STRIPE_SK_KEY_LIVE,
 	stripeConfig
 )
+const endpointSecret = process.env.WEBHOOK_SECRET
 
 export default {
 	async handler(ctx, _next) {
 		// This is your Stripe CLI webhook secret for testing your endpoint locally.
-		const endpointSecret = process.env.WEBHOOK_SECRET
 
 		let event
 

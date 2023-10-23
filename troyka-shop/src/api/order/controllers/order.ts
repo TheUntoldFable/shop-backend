@@ -1,5 +1,6 @@
 ('use strict')
 import { v4 as uuidv4 } from 'uuid'
+
 const stripe = require('stripe')(
 	process.env.NODE_ENV === 'development'
 		? process.env.STRIPE_SK_KEY_TEST
@@ -12,9 +13,10 @@ const { createCoreController } = require('@strapi/strapi').factories
 
 module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 	async create(ctx) {
-		const { products, paymentMethod, status, addressInfo, user, totalPrice } =
+		const { products, paymentMethod, status, addressInfo,credentialsInfo, user, totalPrice } =
       ctx.request.body
 		const { host } = ctx.request
+
 		try {
 			if (paymentMethod === 'card') {
 				const orderId = await uuidv4()
@@ -59,6 +61,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 							orderId,
 							status,
 							addressInfo,
+							credentialsInfo,
 							user,
 							totalPrice,
 						},
@@ -94,6 +97,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 				await strapi.service('api::order.order').create({
 					data: {
 						addressInfo,
+						credentialsInfo,
 						products,
 						stripeId: undefined,
 						paymentMethod,
@@ -108,6 +112,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 					products,
 					stripeId: undefined,
 					paymentMethod,
+					credentialsInfo,
 					addressInfo,
 					user,
 					totalPrice,
