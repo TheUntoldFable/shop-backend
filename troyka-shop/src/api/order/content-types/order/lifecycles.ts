@@ -50,7 +50,7 @@ export default {
 		if (result?.addressInfo?.officeAddress) {
 			try {
 				await strapi.plugins['email'].services.email.send({
-					to: 'kikaya4979@weirby.com',
+					to: 'pilyovmartin20@gmail.com',
 					from: 'info.troyka@gmail.com',
 					subject: 'Нова поръчка',
 					html: `<div><h2>Поръка №: ${result.orderId}</h2></br>
@@ -70,7 +70,7 @@ export default {
 		} else {
 			try {
 				await strapi.plugins['email'].services.email.send({
-					to: 'kikaya4979@weirby.com',
+					to: 'pilyovmartin20@gmail.com',
 					from: 'info.troyka@gmail.com',
 					subject: 'Нова поръчка',
 					html: `<div><h2>Поръка №: ${result.orderId}</h2></br>
