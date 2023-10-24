@@ -16,7 +16,6 @@ const endpointSecret = process.env.WEBHOOK_SECRET
 export default {
 	async handler(ctx, _next) {
 		// This is your Stripe CLI webhook secret for testing your endpoint locally.
-
 		let event
 
 		const raw = ctx.request.body[Symbol.for('unparsedBody')]
@@ -50,6 +49,10 @@ export default {
 
 				const itemToUpdate = orders.find((item) => item)
 
+				const locale = itemToUpdate.products.find(
+					(item) => item.attributes.locale
+				).attributes.locale
+
 				if (itemToUpdate) {
 					try {
 						const entry = await strapi.entityService.update(
@@ -62,6 +65,39 @@ export default {
 								},
 							}
 						)
+
+						const selectMesage = {
+							it: `<div><h3>Grazie per aver acquistato con noi!</h3>
+							<br/>
+							<p>Il tuo numero d'ordine è: <strong>${itemToUpdate.orderId}</strong></p>
+							<p>Prevedi la consegna del tuo ordine entro 5 giorni lavorativi.</p>
+							<div>`,
+							bg: `<div><h3>Благодарим ви, че пазарувахте с нас!</h3>
+						<br/>
+						<p>Номерът на вашата поръчка е: <strong>${itemToUpdate.orderId}</strong></p>
+						<p>Очаквайте доставката на вашата поръчка до 5 работни дни.</p>
+						<div>`,
+							en: `<div><h3>Thank you for shopping with us!</h3>
+							<br/>
+							<p>Your order number is: <strong>${itemToUpdate.orderId}</strong></p>
+							<p>Expect delivery of your order within 5 working days.</p>
+							<div>`,
+						}
+
+						const selectSubject = {
+							it: 'Il tuo ordine!',
+							en: 'Your order!',
+							bg: 'Вашата поръчка!'
+						}
+
+						//Send message to recipient
+						await strapi.plugins['email'].services.email.send({
+							to: itemToUpdate?.credentialsInfo?.email,
+							from: 'info.troyka@gmail.com', //e.g. single sender verification in SendGrid
+							subject: selectSubject[locale],
+							html: selectMesage[locale],
+						})
+
 						console.log(entry, '- Order')
 					} catch (error) {
 						console.log(error, 'Error updating item.')
