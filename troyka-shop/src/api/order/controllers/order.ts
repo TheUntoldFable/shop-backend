@@ -13,8 +13,16 @@ const { createCoreController } = require('@strapi/strapi').factories
 
 module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 	async create(ctx) {
-		const { products, paymentMethod, status, addressInfo,credentialsInfo, user, totalPrice } =
-      ctx.request.body
+		const {
+			products,
+			paymentMethod,
+			status,
+			addressInfo,
+			credentialsInfo,
+			billingAddressInfo,
+			user,
+			totalPrice,
+		} = ctx.request.body
 		const { host } = ctx.request
 
 		try {
@@ -52,19 +60,22 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 					line_items: lineItems,
 				})
 
+				const stripeData = {
+					products,
+					stripeId: session.id,
+					paymentMethod,
+					orderId,
+					status,
+					addressInfo,
+					billingAddressInfo,
+					credentialsInfo,
+					user,
+					totalPrice,
+				}
+
 				if (session) {
 					await strapi.service('api::order.order').create({
-						data: {
-							products,
-							stripeId: session.id,
-							paymentMethod,
-							orderId,
-							status,
-							addressInfo,
-							credentialsInfo,
-							user,
-							totalPrice,
-						},
+						data: stripeData,
 					})
 				}
 
@@ -94,29 +105,25 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 					})
 				)
 
-				await strapi.service('api::order.order').create({
-					data: {
-						addressInfo,
-						credentialsInfo,
-						products,
-						stripeId: undefined,
-						paymentMethod,
-						orderId,
-						status,
-						user,
-						totalPrice,
-					},
-				})
 
-				return {
+				const defaultData = {
 					products,
 					stripeId: undefined,
 					paymentMethod,
-					credentialsInfo,
+					orderId,
+					status,
 					addressInfo,
+					billingAddressInfo,
+					credentialsInfo,
 					user,
 					totalPrice,
 				}
+
+				await strapi.service('api::order.order').create({
+					data: defaultData,
+				})
+
+				return defaultData
 			}
 		} catch (error) {
 			ctx.response.status = 500

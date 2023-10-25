@@ -53,6 +53,9 @@
     "credentialsInfo": {
       "type": "json",
       "required": true
+    },
+    "billingAddressInfo": {
+      "type": "json"
     }
   }
 }
