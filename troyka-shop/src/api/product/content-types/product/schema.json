@@ -127,6 +127,16 @@
       },
       "type": "integer",
       "required": true
+    },
+    "outOfStock": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": false,
+      "required": false
     }
   }
 }
