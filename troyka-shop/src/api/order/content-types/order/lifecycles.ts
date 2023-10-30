@@ -32,7 +32,7 @@ export default {
 				<div>Акаунт: ${result?.user}</div></br>
 				<div>Имейл: ${result.credentialsInfo?.email}</div></br>
 				<div>Офис адрес: ${result.addressInfo?.officeAddress}</div>
-				<h3>Стойност на поръчка: ${result.totalPrice} ${locale === 'bg' ? 'лв' : '€'}</h3></div>`})
+				<h3>Стойност на поръчка: ${result.totalPrice} ЛВ}</h3></div>`})
 
 		if(result.paymentMethod !== 'card'){
 			try {
