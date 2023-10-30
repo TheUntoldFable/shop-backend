@@ -31,7 +31,7 @@ export interface Order {
   paymentMethod: string;
   orderId: string;
   status: string;
-  addressInfo: string;
+  addressInfo: any;
   credentialsInfo: {
     email: string,
     firstName: string,
@@ -41,4 +41,5 @@ export interface Order {
   user?: string | null;
   totalPrice: number;
   isPaid: boolean;
+  billingAddressInfo?: any
 }

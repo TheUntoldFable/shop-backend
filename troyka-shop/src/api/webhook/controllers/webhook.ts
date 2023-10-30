@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import { Order } from '../../../models/order'
+import { homeType, officeType, paymentArrive, paymentCard, selectSubject, selectTemplateId } from '../../../utils/mailLocales'
 
 const stripeConfig: Stripe.StripeConfig = {
 	apiVersion: '2022-11-15',
@@ -66,37 +67,39 @@ export default {
 							}
 						)
 
-						const selectMesage = {
-							it: `<div><h3>Grazie per aver acquistato con noi!</h3>
-							<br/>
-							<p>Il tuo numero d'ordine è: <strong>${itemToUpdate.orderId}</strong></p>
-							<p>Prevedi la consegna del tuo ordine entro 5 giorni lavorativi.</p>
-							<div>`,
-							bg: `<div><h3>Благодарим ви, че пазарувахте с нас!</h3>
-						<br/>
-						<p>Номерът на вашата поръчка е: <strong>${itemToUpdate.orderId}</strong></p>
-						<p>Очаквайте доставката на вашата поръчка до 5 работни дни.</p>
-						<div>`,
-							en: `<div><h3>Thank you for shopping with us!</h3>
-							<br/>
-							<p>Your order number is: <strong>${itemToUpdate.orderId}</strong></p>
-							<p>Expect delivery of your order within 5 working days.</p>
-							<div>`,
+						const calculateDelivery = () => {
+							if (itemToUpdate.totalPrice >= 50) {
+								return 0
+							}
+							if (itemToUpdate.totalPrice < 50) {
+								return itemToUpdate.addressInfo?.officeAddress ? 5 : 7.5
+							}
 						}
 
-						const selectSubject = {
-							it: 'Il tuo ordine!',
-							en: 'Your order!',
-							bg: 'Вашата поръчка!'
+						try {
+							await strapi.plugins['email'].services.email.send({
+								to: itemToUpdate?.credentialsInfo?.email,
+								from: 'info.troyka@gmail.com',
+								subject: selectSubject[locale],
+								template_id: selectTemplateId[locale],
+								dynamic_template_data: {
+									order_id: itemToUpdate.orderId.toUpperCase(),
+									address: itemToUpdate.addressInfo,
+									office_address: itemToUpdate.addressInfo?.officeAddress,
+									payment_method: itemToUpdate.paymentMethod === 'arrive'? paymentArrive[locale]: paymentCard[locale],
+									delivery_option: itemToUpdate.addressInfo?.officeAddress
+										? officeType[locale]
+										: homeType[locale],
+									subtotal: itemToUpdate.totalPrice - calculateDelivery(),
+									total: itemToUpdate.totalPrice - calculateDelivery(),
+									delivery_price: calculateDelivery(),
+									billing_address: itemToUpdate?.billingAddressInfo,
+									products: itemToUpdate.products
+								}
+							})
+						}catch (error) {
+							console.log(error,' error')
 						}
-
-						//Send message to recipient
-						await strapi.plugins['email'].services.email.send({
-							to: itemToUpdate?.credentialsInfo?.email,
-							from: 'info.troyka@gmail.com', //e.g. single sender verification in SendGrid
-							subject: selectSubject[locale],
-							html: selectMesage[locale],
-						})
 
 						console.log(entry, '- Order')
 					} catch (error) {
