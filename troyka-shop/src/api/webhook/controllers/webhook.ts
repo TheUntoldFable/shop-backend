@@ -86,6 +86,7 @@ export default {
 									order_id: itemToUpdate.orderId.toUpperCase(),
 									address: itemToUpdate.addressInfo,
 									office_address: itemToUpdate.addressInfo?.officeAddress,
+									payment_option: itemToUpdate.paymentMethod,
 									payment_method: itemToUpdate.paymentMethod === 'arrive'? paymentArrive[locale]: paymentCard[locale],
 									delivery_option: itemToUpdate.addressInfo?.officeAddress
 										? officeType[locale]

@@ -45,6 +45,7 @@ export default {
 						order_id: result.orderId.toUpperCase(),
 						address: result.addressInfo,
 						office_address: result.addressInfo?.officeAddress,
+						payment_option: result.payment_method,
 						payment_method: result.paymentMethod === 'arrive'? paymentArrive[locale]: paymentCard[locale],
 						delivery_option: result.addressInfo?.officeAddress
 							? officeType[locale]
