@@ -41,6 +41,7 @@ export default {
 					from: 'info.troyka@gmail.com',
 					subject: selectSubject[locale],
 					template_id: selectTemplateId[locale],
+					content: [],
 					dynamic_template_data: {
 						order_id: result.orderId.toUpperCase(),
 						address: result.addressInfo,
