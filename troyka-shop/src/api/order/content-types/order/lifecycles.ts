@@ -57,8 +57,8 @@ export default {
 						products: result.products
 					}
 				})
-			}catch (error) {
-				console.log(error,' error')
+			} catch (error) {
+				console.log(JSON.stringify(error),' error')
 			}
 		}
 
