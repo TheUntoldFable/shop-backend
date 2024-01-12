@@ -29,10 +29,6 @@
       "required": true,
       "unique": true
     },
-    "status": {
-      "type": "string",
-      "required": false
-    },
     "addressInfo": {
       "type": "json",
       "required": true
@@ -56,6 +52,16 @@
     },
     "billingAddressInfo": {
       "type": "json"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "active",
+        "finished",
+        "cancelled"
+      ],
+      "required": true,
+      "default": "active"
     }
   }
 }
