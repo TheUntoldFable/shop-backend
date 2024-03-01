@@ -3,25 +3,33 @@
  */
 
 import { factories } from '@strapi/strapi'
+import { Context } from 'koa'
 
-export default factories.createCoreController('api::subscription.subscription',({ strapi }) => ({
-	async create(ctx) {
-		const { email } = ctx.request.body
+interface SubscriptionContext extends Context {
+  body: { email?: string };
+}
 
-		if(!email) return
+export default factories.createCoreController(
+	'api::subscription.subscription',
+	({ strapi }) => ({
+		async create(ctx: SubscriptionContext) {
+			const email = ctx.body.email
 
-		try {
-			const res = await strapi.service('api::subscription.subscription').create({
-				data: {
-					email
-				},
-			})
+			if (!email) return
 
-			return { emailData: res }
+			try {
+				const res = await strapi
+					.service('api::subscription.subscription')
+					.create({
+						data: {
+							email,
+						},
+					})
 
-		} catch (error) {
-			return { error }
-		}
-	}
-
-}))
+				return { emailData: res }
+			} catch (error) {
+				return { error }
+			}
+		},
+	}),
+)

@@ -38,12 +38,15 @@ export default {
 		switch (event.type) {
 		case 'payment_intent.succeeded':
 			if (event.data.object) {
-				let orders: Order[]
+				let orders
 
 				try {
-					orders = await strapi.entityService.findMany('api::order.order', {
+					//Find the latest order
+					const res = await strapi.entityService.findMany('api::order.order', {
 						sort: { id: 'desc' },
 					})
+
+					orders.push(res)
 				} catch (error) {
 					console.log(error, 'Error fetching orders')
 				}
@@ -56,6 +59,7 @@ export default {
 
 				if (itemToUpdate) {
 					try {
+						//Update latest order
 						const entry = await strapi.entityService.update(
 							'api::order.order',
 							itemToUpdate?.id,
