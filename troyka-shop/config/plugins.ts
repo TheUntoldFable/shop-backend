@@ -1,8 +1,4 @@
 module.exports = ({ env }) => ({
-	// ...
-	'schemas-to-ts': {
-		enabled: true,
-	},
 	upload: {
 		config: {
 			provider: 'cloudinary',

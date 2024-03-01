@@ -12,7 +12,7 @@ export interface User {
         updatedAt: Date;
       }
     }
-    
+
 export interface User_Plain {
       id: number;
       username: string;
@@ -23,4 +23,4 @@ export interface User_Plain {
       createdAt: Date;
       updatedAt: Date;
     }
-    
+

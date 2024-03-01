@@ -11,5 +11,5 @@ export interface Payload<T> {
         }
       };
     }
-    
+
 
