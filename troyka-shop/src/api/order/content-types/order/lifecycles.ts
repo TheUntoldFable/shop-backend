@@ -27,9 +27,9 @@ export default {
 		await Promise.all([
 			sendMailTo('pilyovmartin20@gmail.com', result),
 			sendMailTo('georgi.yankov.24@gmail.com', result),
+      sendMailTo('tsvetomir.uzunoff@gmail.com', result),
 		])
 
-		if (result.paymentMethod !== 'card') {
 			try {
 				await strapi.plugins['email'].services.email.send({
 					to: result?.credentialsInfo?.email,
@@ -55,8 +55,8 @@ export default {
 					},
 				})
 			} catch (error) {
-				console.log(JSON.stringify(error), ' error')
+
+				console.log(JSON.stringify(error), 'Error when sending email.')
 			}
-		}
 	},
 }
