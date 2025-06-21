@@ -29,6 +29,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 			if (paymentMethod === 'card') {
 				const orderId = await uuidv4()
 
+
 				const lineItems = await Promise.all(
 					products.map(async (product) => {
 						const item = await strapi
@@ -48,6 +49,7 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 					})
 				)
 
+
 				const session = await stripe.checkout.sessions.create({
 					payment_method_types: ['card'],
 					mode: 'payment',
@@ -58,9 +60,31 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 						? 'http://localhost:3000/failed'
 						: `https://${host}/failed`,
 					line_items: lineItems,
+					shipping_options:  totalPrice < 50 ? [
+						{
+							shipping_rate_data: {
+								type: 'fixed_amount',
+								fixed_amount: {
+									amount: 750,
+									currency: 'bgn',
+								},
+								display_name: 'Speedy',
+								delivery_estimate: {
+									minimum: {
+										unit: 'business_day',
+										value: 1,
+									},
+									maximum: {
+										unit: 'business_day',
+										value: 3,
+									},
+								},
+							},
+						},
+					] : [],
 				})
 
-				const stripeData = {
+				const data = {
 					products,
 					stripeId: session.id,
 					paymentMethod,
@@ -73,11 +97,12 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 					totalPrice,
 				}
 
+
 				if (session) {
-					await strapi.service('api::order.order').create({
-						data: stripeData,
-					})
+
+					await strapi.service('api::order.order').create({data})
 				}
+
 
 				return { stripeSession: session }
 			} else {
@@ -88,9 +113,6 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 						const item = await strapi
 							.service('api::product.product')
 							.findOne(product.id)
-
-						console.log('this is item------->', item)
-						console.log('this is product------->', product)
 
 						return {
 							price_data: {
@@ -126,8 +148,9 @@ module.exports = createCoreController('api::order.order', ({ strapi }) => ({
 				return defaultData
 			}
 		} catch (error) {
+			console.log(error, 'error')
 			ctx.response.status = 500
-			return { error }
+			return { error, message: 'Something went wrong' }
 		}
 	},
 }))
